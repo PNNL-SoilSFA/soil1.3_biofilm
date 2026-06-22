@@ -1,4 +1,4 @@
-* New idea about the processing
+* About the processing with ImageJ
 1. Using the manual mask to find the pillar region and calculate the threshold for filtering. This can be calculated for either individual patch, layer or the whole image or all stacks.
 
 ImageJ method for creating masks:
