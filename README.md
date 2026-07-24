@@ -6,13 +6,11 @@ https://creativecommons.org/publicdomain/zero/1.0/
  
 This material is free to use, and attribution is always appreciated.  Attribution may be as follows:
 
-> Authored by Song Feng at the Pacific Northwest National Laboratory, operated by Battelle for the U.S. Department of Energy.
-> (Optional, if applicable publication):  Please cite the following in your work:
-> 
-> > Song Feng, Natalie Sadler, Arunima Bhattacharjee, Ryan McClure, Kirsten Hofmockel. (2026) Imaging and analysis data of short-term co-culture in a SoilChip.
-> 
-> > PNNL DataHub: https://data.pnnl.gov/group/nodes/dataset/34902
-> > DOI: https://doi.org/10.25584/3375157
+> Authored by Song Feng at the Pacific Northwest National Laboratory, operated by Battelle for the U.S. Department of Energy.<br>
+> Please cite the following in your work:<br>
+> > Song Feng, Natalie Sadler, Arunima Bhattacharjee, Ryan McClure, Kirsten Hofmockel. (2026) Imaging and analysis data of short-term co-culture in a SoilChip.<br>
+> > PNNL DataHub: https://data.pnnl.gov/group/nodes/dataset/34902<br>
+> > DOI: https://doi.org/10.25584/3375157<br>
 
 
 ### Disclaimer:
@@ -21,11 +19,11 @@ Reference herein to any specific commercial product, process, or service by trad
 
 <div align="center">
 
-PACIFIC NORTHWEST NATIONAL LABORATORY
-operated by
-BATTELLE
-for the
-UNITED STATES DEPARTMENT OF ENERGY
-under Contract DE-AC05-76RL01830
+PACIFIC NORTHWEST NATIONAL LABORATORY<br>
+operated by<br>
+BATTELLE<br>
+for the<br>
+UNITED STATES DEPARTMENT OF ENERGY<br>
+under Contract DE-AC05-76RL01830<br>
 
 </div>
