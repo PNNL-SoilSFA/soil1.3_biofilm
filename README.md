@@ -10,8 +10,9 @@ This material is free to use, and attribution is always appreciated.  Attributio
 > (Optional, if applicable publication):  Please cite the following in your work:
 > 
 > > Song Feng, Natalie Sadler, Arunima Bhattacharjee, Ryan McClure, Kirsten Hofmockel. (2026) Imaging and analysis data of short-term co-culture in a SoilChip.
-> > PNNL DataHub https://data.pnnl.gov/group/nodes/dataset/34902
-> > https://doi.org/10.25584/3375157
+> 
+> > PNNL DataHub: https://data.pnnl.gov/group/nodes/dataset/34902
+> > DOI: https://doi.org/10.25584/3375157
 
 
 ### Disclaimer:
