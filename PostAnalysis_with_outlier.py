@@ -61,10 +61,11 @@ def slide_sum_y_vol(img, slide_len = 100):
         img_slides.append(np.sum(img1d[i:i+slide_len], axis=0))
     return(np.array(img_slides))
 
-
+# %%
+data_dir = "./data"
 
 # %%
-work_dir = "/Users/feng626/workspace/data/soil1.3/spatial_interactions/"
+work_dir = f"{data_dir}/soil1.3/spatial_interactions/"
 result_dir = work_dir + "20220408/"
 
 # analysis_dir = "./results/{}/".format(datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S.%f"))
@@ -686,10 +687,11 @@ print("The maximum habitat size is: {}".format(pop_den_1d_df["Volume"].max()))
 # # %matplotlib inline
 # matplotlib.rcParams['figure.dpi'] = 200
 # matplotlib.rcParams['figure.figsize'] = (5, 5)
-
+# %%
+data_dir = "./data"
 
 # %%
-# work_dir = "/Users/feng626/workspace/data/soil1.3/spatial_interactions/"
+# work_dir = f"{data_dir}/soil1.3/spatial_interactions/"
 # result_dir = work_dir + "20220408/"
 
 # # analysis_dir = "./results/{}/".format(datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S.%f"))

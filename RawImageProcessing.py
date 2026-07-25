@@ -281,15 +281,17 @@ def simple_stitch_z_with_mask(imgs, mask, z_num = None, seq_num = 4, hr_margin =
         stitched.append(mask_img(simple_stitch(images, seq_num, hr_margin, vu_margin), get_mask(mask)))
     return(np.array(stitched))
 
+# %%
+data_dir = "./data"
 
 # %%
-work_dir = "/Users/feng626/workspace/data/SoilSFA/spatial_interactions"
+work_dir = f"{data_dir}/SoilSFA/spatial_interactions"
 patch_number = 8
 rolling_ball_sizes = [7, 9, 5]
 min_thrs = [32, 48, 128]
 sharping_thr = 0.01
 
-rep1_dir = "/Users/feng626/workspace/data/SoilSFA/spatial_interactions/Activity_1.3_rep1_11.18.21_start"
+rep1_dir = f"{data_dir}/SoilSFA/spatial_interactions/Activity_1.3_rep1_11.18.21_start"
 rep3_dir = work_dir + "/Activity_1.3_rep3_02.07.22_start"
 rep3_img_dirs = [name for name in os.listdir(rep3_dir) if os.path.isdir(os.path.join(rep3_dir, name))] 
 rep3_img_dirs.sort()

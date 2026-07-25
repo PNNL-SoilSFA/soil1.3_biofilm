@@ -75,9 +75,10 @@ def crop(img, top, left, crop_size = 960):
 
 
 # %%
+data_dir = "./data"
 
 # %%
-work_dir = "/Users/feng626/workspace/data/soil1.3/spatial_interactions/"
+work_dir = f"{data_dir}/soil1.3/spatial_interactions/"
 result_dir = work_dir + "20220408/"
 
 # analysis_dir = "./results/{}/".format(datetime.datetime.now().strftime("%Y%m%d_%H_%M_%S.%f"))
