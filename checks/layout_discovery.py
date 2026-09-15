@@ -41,10 +41,10 @@ from experiment_analysis import (
 def _write_sample(directory: Path, sample_id: str, substrate: str, *, mask_case: str) -> None:
     directory.mkdir(parents=True)
     base = f"{sample_id}_{substrate}_1"
-    (directory / f"{base}_w1SD BF_stitched_{mask_case}.tif").touch()
+    (directory / f"{base}_w1SD_BF_stitched_{mask_case}.tif").touch()
     for channel in ("w4SD RFP", "w3SD GFP", "w2SD DAPI"):
         for index in range(1, 9):
-            (directory / f"{base}_{channel}_s{index}.TIF").touch()
+            (directory / f"{base}_{channel.replace(' ', '_')}_s{index}.TIF").touch()
 
 
 class LayoutDiscoveryTest(unittest.TestCase):
@@ -64,9 +64,27 @@ class LayoutDiscoveryTest(unittest.TestCase):
                 (root / f"Activity_1.3_rep{index}").mkdir()
             replicate = root / "Activity_1.3_rep1"
             _write_sample(replicate / "Chitin" / "11.18.21_23", "11.18.21_23", "Chitin", mask_case="MASK")
+            # Resource-fork sidecars must not be mistaken for a second TIFF.
+            (replicate / "Chitin" / "11.18.21_23" / "._11.18.21_23_Chitin_1_w1SD_BF_stitched_MASK.tif").touch()
             self.assertEqual(discover_experiment_1_3_1_replicates(root), [(root / f"Activity_1.3_rep{index}").resolve() for index in range(1, 4)])
             records = discover_raw_samples(replicate, replicate="rep1")
             self.assertEqual([(record.sample_id, record.substrate) for record, *_ in records], [("11.18.21_23", "Chitin")])
+
+    def test_explicit_historical_skip_excludes_the_incomplete_rep3_acquisition(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            replicate = Path(temporary_directory) / "Activity_1.3_rep3"
+            _write_sample(replicate / "Chitin" / "02.10.22_5PM", "02.10.22_5PM", "Chitin", mask_case="mask")
+            skipped = replicate / "Chito5" / "02.09.22_11AM_Chito5"
+            skipped.mkdir(parents=True)
+            (skipped / "02.09.22_11AM_Chito5_1_w1SD_BF_stitched_mask.tif").touch()
+
+            records = discover_raw_samples(
+                replicate,
+                replicate="rep3",
+                excluded_acquisition_names={"02.09.22_11AM_Chito5"},
+            )
+
+            self.assertEqual([(record.sample_id, record.substrate) for record, *_ in records], [("02.10.22_5PM", "Chitin")])
 
 
 if __name__ == "__main__":

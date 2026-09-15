@@ -61,6 +61,15 @@ without the `_mask`/`_MASK` suffix, other channels (for example `w1SD BF`),
 and miscellaneous TIFFs present in a download are not read by this script's
 main processing loops.
 
+### Replicate-3 skipped acquisition
+
+Before constructing any filenames, the historical replicate-3 loop explicitly
+skips the acquisition directory `02.09.22_11AM_Chito5`. The reviewer runner
+preserves that exception: it does not validate, process, or create downstream
+rows for this acquisition. This avoids treating the field-2 fluorescence tiles
+as a substitute for the incomplete field-1 set, which has the only stitched
+mask in that directory.
+
 ### Replicate-1 series-2 exception
 
 The replicate-1 inventory contains 66 `_2`-series filenames: 33 under

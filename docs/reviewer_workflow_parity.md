@@ -18,7 +18,7 @@ The historical files remain the scientific record. Their exploratory figures, in
 | `RawImageProcessing.py`: mask convention is zero-valued habitat, and legacy processed TIFF/CSV/pickle products are emitted | `process_raw_experiment`, `_load_arrays`, `SampleRecord` | The runner reads the same mask semantics and writes the same per-channel and `*_combined_processed` product names, under reviewer-selected results directories. |
 | `PostAnalysis_spatial_sampling.py`: 1.3.1 temporal tables, outlier-excluded samples, 480-pixel windows, 100 trials, 0.125-pixel length/0.015625-pixel area | `load_experiment_1_3_1_metadata`, `temporal_tables`, `random_spatial_table`; 1.3.1 runner defaults | The metadata test reads both notebook sample lists and proves that `experiment_1.3.1_metadata.csv` exactly preserves times and the without-outlier membership. Omitting `--seed`, or using `--seed none`, requests a non-deterministic draw; an integer seed enables reproducibility. |
 | `PostAnalysis_with_outlier.py`: 1.3.1 temporal tables and complete 500-pixel spatial/delta tables at steps 1, 10, and 100 | `temporal_tables`, `full_spatial_tables`; 1.3.1 runner defaults | The shared parity test exercises the temporal, sliding-window, density, and delta formulas. |
-| Historical hard-coded dataset paths and manual file lists | `discover_experiment_1_3_1_replicates`, `discover_experiment_1_3_2_replicate`, `discover_raw_samples` | The runner checks the two observed published layouts separately and fails a mixed root before processing. It writes outside the downloaded input. |
+| Historical hard-coded dataset paths and manual file lists | `discover_experiment_1_3_1_replicates`, `discover_experiment_1_3_2_replicate`, `discover_raw_samples` | The historical raw script hard-codes space-separated `w1SD BF_stitched_{MASK|mask}.tif` paths, but the published inventories use underscore-separated `w1SD_BF_stitched_{MASK|mask}.tif` paths and underscore-separated channel names. Discovery follows the published convention, ignores macOS `._*` sidecars, skips replicate-3 acquisition `02.09.22_11AM_Chito5` exactly as the historical script does, checks the two observed layouts separately, and fails a mixed root before processing. It writes outside the downloaded input. |
 
 ## Layout contract exercised by tests
 
@@ -26,8 +26,8 @@ The tests create their files in temporary directories and delete them automatica
 
 | Experiment | Synthetic directory and filename convention | What is proved |
 | --- | --- | --- |
-| 1.3.1 | `Activity_1.3_rep1/Chitin/11.22.21_17/11.22.21_17_Chitin_1_w1SD BF_stitched_mask.tif` (and equivalent rep2/rep3 files) | Substrate-first discovery, all three replicate runners, raw processing, both spatial branches, random-window output with optional integer seeding, and outputs outside the download. |
-| 1.3.2 | `Activity_1.3_rep7/10.19.22_11AM_TP8_Chitin/10.19.22_11AM_TP8_Chitin_1_w1SD BF_stitched_mask.tif` | Acquisition-first discovery from either the download root or rep7 itself, raw processing, legacy combined output naming, and outputs outside the download. |
+| 1.3.1 | `Activity_1.3_rep1/Chitin/11.22.21_17/11.22.21_17_Chitin_1_w1SD_BF_stitched_mask.tif` (and equivalent rep2/rep3 files) | Substrate-first discovery, all three replicate runners, raw processing, both spatial branches, random-window output with optional integer seeding, and outputs outside the download. |
+| 1.3.2 | `Activity_1.3_rep7/10.19.22_11AM_TP8_Chitin/10.19.22_11AM_TP8_Chitin_1_w1SD_BF_stitched_mask.tif` | Acquisition-first discovery from either the download root or rep7 itself, raw processing, legacy combined output naming, and outputs outside the download. |
 
 Each synthetic sample includes the mask plus all 24 required raw TIFF files: three channels times eight tiles. The tile dimensions deliberately create a stitched width of 965 pixels, which is sufficient to exercise the 480- and 500-pixel spatial defaults.
 

@@ -40,13 +40,13 @@ uv run python -m compileall -q .
 
 `test_runner_workflows.py` passes the following temporary `--data-dir`
 directories to the runners. Each synthetic acquisition contains one
-`*_w1SD BF_stitched_mask.tif` file and 24 fluorescence z-stacks: three
-channels (`w4SD RFP`, `w3SD GFP`, `w2SD DAPI`) times eight sites (`s1`–`s8`).
+`*_w1SD_BF_stitched_mask.tif` file and 24 fluorescence z-stacks: three
+channels (`w4SD_RFP`, `w3SD_GFP`, `w2SD_DAPI`) times eight sites (`s1`–`s8`).
 
 ```text
 <temporary-directory>/download/                         # passed to 1.3.1
 ├── Activity_1.3_rep1/Chitin/11.22.21_17/
-│   ├── 11.22.21_17_Chitin_1_w1SD BF_stitched_mask.tif
+│   ├── 11.22.21_17_Chitin_1_w1SD_BF_stitched_mask.tif
 │   └── 11.22.21_17_Chitin_1_<channel>_s<1..8>.tif
 ├── Activity_1.3_rep2/Chitin/12.16.21_5PM/
 │   └── 12.16.21_5PM_Chitin_1_<...>
@@ -56,7 +56,7 @@ channels (`w4SD RFP`, `w3SD GFP`, `w2SD DAPI`) times eight sites (`s1`–`s8`).
 <temporary-directory>/download/                         # passed to 1.3.2
 └── Activity_1.3_rep7/
     └── 10.19.22_11AM_TP8_Chitin/
-        ├── 10.19.22_11AM_TP8_Chitin_1_w1SD BF_stitched_mask.tif
+        ├── 10.19.22_11AM_TP8_Chitin_1_w1SD_BF_stitched_mask.tif
         └── 10.19.22_11AM_TP8_Chitin_1_<channel>_s<1..8>.tif
 ```
 
@@ -66,7 +66,7 @@ For Experiment 1.3.2, the same test executes the runner twice: once with
 accepted `--data-dir` forms.
 
 `layout_discovery.py` creates smaller, empty placeholder files in the same
-two layout conventions. `test_scientific_parity.py` creates only a temporary
+two layout conventions and verifies that `._*` sidecars are ignored. `test_scientific_parity.py` creates only a temporary
 mask TIFF and combined-image pickle because it tests calculations after raw
 processing.
 

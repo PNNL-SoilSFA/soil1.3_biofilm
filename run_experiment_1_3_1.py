@@ -39,6 +39,8 @@ def main() -> int:
         from experiment_analysis import (
             BiofilmInputError,
             discover_experiment_1_3_1_replicates,
+            discover_raw_samples,
+            EXPERIMENT_1_3_1_REP3_SKIPPED_ACQUISITIONS,
             full_spatial_tables,
             load_experiment_1_3_1_metadata,
             process_raw_experiment,
@@ -55,10 +57,32 @@ def main() -> int:
 
     try:
         output = resolve_reviewer_output_directory(args.output_dir, experiment="experiment_1.3.1", run_id=args.run_id)
-        records = []
         metadata = load_experiment_1_3_1_metadata()
-        for index, raw_directory in enumerate(discover_experiment_1_3_1_replicates(args.data_dir), start=1):
-            records.extend(process_raw_experiment(raw_directory, output / "processed" / f"rep{index}", replicate=f"rep{index}", metadata=metadata))
+        raw_directories = discover_experiment_1_3_1_replicates(args.data_dir)
+        # Check every replicate's file set before creating any result directory.
+        # In particular, this prevents a missing tile in a later replicate from
+        # leaving the earlier replicates partially processed.
+        for index, raw_directory in enumerate(raw_directories, start=1):
+            excluded_acquisitions = EXPERIMENT_1_3_1_REP3_SKIPPED_ACQUISITIONS if index == 3 else ()
+            discover_raw_samples(
+                raw_directory,
+                replicate=f"rep{index}",
+                metadata=metadata,
+                excluded_acquisition_names=excluded_acquisitions,
+            )
+
+        records = []
+        for index, raw_directory in enumerate(raw_directories, start=1):
+            excluded_acquisitions = EXPERIMENT_1_3_1_REP3_SKIPPED_ACQUISITIONS if index == 3 else ()
+            records.extend(
+                process_raw_experiment(
+                    raw_directory,
+                    output / "processed" / f"rep{index}",
+                    replicate=f"rep{index}",
+                    metadata=metadata,
+                    excluded_acquisition_names=excluded_acquisitions,
+                )
+            )
         pixel_area = args.pixel_size**2
         density, volume = temporal_tables(records, pixel_area=pixel_area)
         without_outliers = [record for record in records if record.include_without_outlier]

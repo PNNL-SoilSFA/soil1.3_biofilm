@@ -1,5 +1,7 @@
 # Code for soil1.3_biofilm papers
 
+Released under the Creative Commons 0 Public Domain Dedication
+
 ## Reproducible command-line workflows
 
 Install the locked project environment with [`uv`](https://docs.astral.sh/uv/):
@@ -13,6 +15,10 @@ uv sync
 ### Paper / Experiment 1.3.1 — three-replicate processing and spatial analysis
 
 This paper accepts the path to its unpacked data download, which contains the three conventional `Activity_1.3_rep1`, `Activity_1.3_rep2`, and `Activity_1.3_rep3` directories. Each of these stores acquisition folders below the substrate directory (for example, `Chitin/11.22.21_17`). For each replicate, the command runs the core of `RawImageProcessing.py`, then performs both Experiment 1.3.1 spatial workflows: the random outlier-excluded analysis represented by `PostAnalysis_spatial_sampling.py` and the full, outlier-inclusive analysis represented by `PostAnalysis_with_outlier.py`.
+
+The published TIFFs use underscore-separated image names, for example `11.22.21_17_Chitin_1_w1SD_BF_stitched_MASK.tif` and `11.22.21_17_Chitin_1_w4SD_RFP_s1.TIF`. macOS `._*` resource-fork sidecars are ignored.
+
+To match `RawImageProcessing.py`, the runner skips the incomplete replicate-3 acquisition `02.09.22_11AM_Chito5`; it writes no raw or downstream record for that acquisition.
 
 ```bash
 uv run biofilm-experiment-1.3.1 \

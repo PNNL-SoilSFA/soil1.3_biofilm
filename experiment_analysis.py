@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Collection, Iterable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -45,12 +45,13 @@ class SampleRecord:
 
 
 MASK_NAME = re.compile(
-    r"^(?P<sample_id>.+)_(?P<substrate>Nag|Chito5|Chitin)_1_w1SD BF_stitched_mask\.tiff?$",
+    r"^(?P<sample_id>.+)_(?P<substrate>Nag|Chito5|Chitin)_1_w1SD_BF_stitched_mask\.tif$",
     re.IGNORECASE,
 )
 EXPERIMENT_1_3_2_REPLICATE_NAME = re.compile(r"Activity_1\.3_rep7(?:_.*)?", re.IGNORECASE)
 EXPERIMENT_1_3_1_REPLICATE_NAME = re.compile(r"Activity_1\.3_rep(?P<replicate>[1-3])(?:_.*)?", re.IGNORECASE)
 RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*$")
+EXPERIMENT_1_3_1_REP3_SKIPPED_ACQUISITIONS = frozenset({"02.09.22_11AM_Chito5"})
 
 
 def _canonical_substrate(value: str) -> str:
@@ -99,14 +100,24 @@ def _sample_layout(mask_file: Path, *, sample_id: str, substrate: str) -> str:
     )
 
 
+def _channel_tile_name(base_name: str, channel: str, index: int) -> str:
+    """Return the underscore-separated name used by published channel TIFFs."""
+    return f"{base_name}_{channel.replace(' ', '_')}_s{index}.tif".lower()
+
+
 def discover_raw_samples(
     data_directory: Path,
     *,
     replicate: str,
     metadata: dict[tuple[str, str, str], tuple[float, bool]] | None = None,
     patch_number: int = 8,
+    excluded_acquisition_names: Collection[str] = (),
 ) -> list[tuple[SampleRecord, tuple[Path, ...], tuple[Path, ...], tuple[Path, ...]]]:
-    """Discover masks and the 3 × 8 TIFF tiles from a published data directory."""
+    """Discover masks and the 3 × 8 TIFF tiles from a published data directory.
+
+    ``excluded_acquisition_names`` is used only for explicit historical
+    per-acquisition skips made by a runner.
+    """
     data_directory = data_directory.expanduser().resolve()
     if not data_directory.is_dir():
         raise BiofilmInputError(f"Data directory does not exist: {data_directory}")
@@ -114,6 +125,11 @@ def discover_raw_samples(
     layouts: set[str] = set()
     for mask_file in sorted(data_directory.rglob("*")):
         if not mask_file.is_file():
+            continue
+        # macOS resource-fork sidecars can accompany the published TIFFs.
+        if mask_file.name.startswith("._"):
+            continue
+        if mask_file.parent.name in excluded_acquisition_names:
             continue
         match = MASK_NAME.match(mask_file.name)
         if not match:
@@ -123,10 +139,14 @@ def discover_raw_samples(
         layouts.add(_sample_layout(mask_file, sample_id=sample_id, substrate=substrate))
         time_hours, include_without_outlier = (metadata or {}).get((replicate, sample_id, substrate), (float("nan"), True))
         base_name = f"{sample_id}_{substrate}_1"
-        file_index = {path.name.lower(): path for path in mask_file.parent.iterdir() if path.is_file()}
+        file_index = {
+            path.name.lower(): path
+            for path in mask_file.parent.iterdir()
+            if path.is_file() and not path.name.startswith("._")
+        }
         channel_tiles = []
         for channel in ("w4SD RFP", "w3SD GFP", "w2SD DAPI"):
-            tiles = tuple(file_index.get(f"{base_name}_{channel}_s{index}.tif".lower()) for index in range(1, patch_number + 1))
+            tiles = tuple(file_index.get(_channel_tile_name(base_name, channel, index)) for index in range(1, patch_number + 1))
             if any(tile is None for tile in tiles):
                 missing = [str(index + 1) for index, tile in enumerate(tiles) if tile is None]
                 raise BiofilmInputError(f"Missing {channel} tile(s) {', '.join(missing)} for {mask_file}.")
@@ -261,6 +281,7 @@ def process_raw_experiment(
     rolling_ball_sizes: Sequence[int] = (7, 9, 5),
     minimum_thresholds: Sequence[int] = (32, 48, 128),
     sharpening_threshold: float = 0.01,
+    excluded_acquisition_names: Collection[str] = (),
 ) -> list[SampleRecord]:
     """Execute the non-interactive core of ``RawImageProcessing.py``.
 
@@ -269,7 +290,13 @@ def process_raw_experiment(
     """
     if len(rolling_ball_sizes) != 3 or len(minimum_thresholds) != 3:
         raise BiofilmInputError("Exactly three per-channel background and threshold settings are required.")
-    raw_records = discover_raw_samples(raw_directory, replicate=replicate, metadata=metadata, patch_number=patch_number)
+    raw_records = discover_raw_samples(
+        raw_directory,
+        replicate=replicate,
+        metadata=metadata,
+        patch_number=patch_number,
+        excluded_acquisition_names=excluded_acquisition_names,
+    )
     output_directory = output_directory.expanduser().resolve()
     output_directory.mkdir(parents=True, exist_ok=True)
     processed_records: list[SampleRecord] = []
