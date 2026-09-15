@@ -74,7 +74,9 @@ class LayoutDiscoveryTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary_directory:
             replicate = Path(temporary_directory) / "Activity_1.3_rep3"
             _write_sample(replicate / "Chitin" / "02.10.22_5PM", "02.10.22_5PM", "Chitin", mask_case="mask")
-            skipped = replicate / "Chito5" / "02.09.22_11AM_Chito5"
+            # The published substrate-first layout uses a shortened directory
+            # name, while the filename retains the acquisition and substrate.
+            skipped = replicate / "Chito5" / "02.09.22_11"
             skipped.mkdir(parents=True)
             (skipped / "02.09.22_11AM_Chito5_1_w1SD_BF_stitched_mask.tif").touch()
 

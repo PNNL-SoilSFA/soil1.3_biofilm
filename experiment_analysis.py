@@ -129,13 +129,14 @@ def discover_raw_samples(
         # macOS resource-fork sidecars can accompany the published TIFFs.
         if mask_file.name.startswith("._"):
             continue
-        if mask_file.parent.name in excluded_acquisition_names:
-            continue
         match = MASK_NAME.match(mask_file.name)
         if not match:
             continue
         sample_id = match["sample_id"]
         substrate = _canonical_substrate(match["substrate"])
+        acquisition_name = f"{sample_id}_{substrate}"
+        if acquisition_name in excluded_acquisition_names:
+            continue
         layouts.add(_sample_layout(mask_file, sample_id=sample_id, substrate=substrate))
         time_hours, include_without_outlier = (metadata or {}).get((replicate, sample_id, substrate), (float("nan"), True))
         base_name = f"{sample_id}_{substrate}_1"
